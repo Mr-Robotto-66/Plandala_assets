@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plandala Assets</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0d1117; color: #e6edf3; padding: 2rem; }
+        h1 { text-align: center; margin-bottom: 0.5rem; font-size: 2rem; }
+        .subtitle { text-align: center; color: #8b949e; margin-bottom: 2rem; }
+        h2 { margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #30363d; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; overflow: hidden; transition: border-color 0.2s; }
+        .card:hover { border-color: #58a6ff; }
+        .card .preview { display: flex; align-items: center; justify-content: center; height: 200px; padding: 1rem; }
+        .card .preview.dark-bg { background: #21262d; }
+        .card .preview.light-bg { background: #f0f0f0; }
+        .card .preview.checker-bg {
+            background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+        }
+        .card .preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .card .info { padding: 0.75rem 1rem; border-top: 1px solid #30363d; }
+        .card .info .filename { font-size: 0.85rem; font-family: monospace; color: #58a6ff; word-break: break-all; }
+        .card .info .desc { font-size: 0.8rem; color: #8b949e; margin-top: 0.25rem; }
+        .toggle-bar { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .toggle-bar button { padding: 0.4rem 0.8rem; border: 1px solid #30363d; border-radius: 6px; background: #161b22; color: #e6edf3; cursor: pointer; font-size: 0.8rem; }
+        .toggle-bar button.active { background: #58a6ff; color: #0d1117; border-color: #58a6ff; }
+    </style>
+</head>
+<body>
+    <h1>Plandala Assets</h1>
+    <p class="subtitle">Click any image to open full size</p>
+
+    <div class="toggle-bar">
+        <span style="color:#8b949e;line-height:2;">Preview background:</span>
+        <button class="bg-btn active" data-bg="dark-bg">Dark</button>
+        <button class="bg-btn" data-bg="light-bg">Light</button>
+        <button class="bg-btn" data-bg="checker-bg">Checker</button>
+    </div>
+
+    <h2>General</h2>
+    <div class="grid" id="general"></div>
+
+    <h2>Black Logos</h2>
+    <div class="grid" id="black"></div>
+
+    <h2>White Logos</h2>
+    <div class="grid" id="white"></div>
+
+    <h2>Transparent Backgrounds</h2>
+    <div class="grid" id="transparent"></div>
+
+    <h2>Archived (Old Logos)</h2>
+    <div class="grid" id="old"></div>
+
+    <script>
+        const assets = {
+            general: [
+                { file: "header.png", desc: "Header banner" },
+                { file: "IMG_3637.PNG", desc: "Mandala artwork" }
+            ],
+            black: [
+                { file: "black_P.PNG", desc: "P icon" },
+                { file: "black_logo.PNG", desc: "Logo" },
+                { file: "black_logo_tag.PNG", desc: "Logo with tagline" }
+            ],
+            white: [
+                { file: "white_P.png", desc: "P icon" },
+                { file: "white_logo.png", desc: "Logo" },
+                { file: "white_logo_tag.PNG", desc: "Logo with tagline" }
+            ],
+            transparent: [
+                { file: "transparent_logos/black_P_transparent.png", desc: "Black P icon" },
+                { file: "transparent_logos/black_logo_transparent.png", desc: "Black logo" },
+                { file: "transparent_logos/black_logo_tag_transparent.png", desc: "Black logo with tagline" },
+                { file: "transparent_logos/white_P_transparent.png", desc: "White P icon" },
+                { file: "transparent_logos/white_logo_transparent.png", desc: "White logo" },
+                { file: "transparent_logos/white_logo_tag_transparent.png", desc: "White logo with tagline" }
+            ],
+            old: [
+                { file: "old logo/logo_black.PNG", desc: "Black logo" },
+                { file: "old logo/logo_white.PNG", desc: "White logo" },
+                { file: "old logo/logo_white_alt.PNG", desc: "White logo (alt)" },
+                { file: "old logo/logo_purple.png", desc: "Purple logo" },
+                { file: "old logo/logo_yellow.png", desc: "Yellow logo" },
+                { file: "old logo/logo_transparent.png", desc: "Transparent logo" }
+            ]
+        };
+
+        let currentBg = "dark-bg";
+
+        function createCard(item) {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+                <a href="${item.file}" target="_blank">
+                    <div class="preview ${currentBg}">
+                        <img src="${item.file}" alt="${item.desc}" loading="lazy">
+                    </div>
+                </a>
+                <div class="info">
+                    <div class="filename">${item.file}</div>
+                    <div class="desc">${item.desc}</div>
+                </div>
+            `;
+            return card;
+        }
+
+        function render() {
+            for (const [section, items] of Object.entries(assets)) {
+                const container = document.getElementById(section);
+                container.innerHTML = "";
+                items.forEach(item => container.appendChild(createCard(item)));
+            }
+        }
+
+        document.querySelectorAll(".bg-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".bg-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                currentBg = btn.dataset.bg;
+                document.querySelectorAll(".preview").forEach(p => {
+                    p.className = "preview " + currentBg;
+                });
+            });
+        });
+
+        render();
+    </script>
+</body>
+</html>
